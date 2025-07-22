@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SchemaCrafter
+
+**Craft intelligent JSON schemas and generate realistic mock data instantly.**
+
+SchemaCrafter is a developer-focused tool that infers detailed JSON schemas from your sample data and generates mock data for rapid prototyping, testing, and API development. Say goodbye to manual schema writing and tedious test data creation — SchemaCrafter crafts them for you.
+
+---
+
+## Features
+
+- 🔍 **Automatic JSON Schema inference** from example JSON objects  
+- 🎲 **Mock data generation** based on inferred schema using realistic values  
+- 🛠️ Supports nested objects and arrays with precise typing  
+- 💾 Export schemas and mock data as JSON or YAML files  
+- 🌗 Light & dark mode for comfortable coding sessions  
+- ⚡ Instant live preview — see schema and mock data side by side  
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+  
+- npm or yarn
+
+### Installation
 
 ```bash
+git clone https://github.com/yourusername/schemacrafter.git
+cd schemacrafter
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Usage
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Paste your JSON sample data into the input box.  
+2. SchemaCrafter will infer the JSON Schema and display it live.  
+3. View or download generated mock data for testing or API prototyping.  
+4. Customize schema manually if needed via the editor.  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+SchemaCrafter is deployed on Vercel for instant access and blazing-fast performance.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+You can add the live demo link to your website easily. For example, include a button or link:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```jsx
+<a href="https://schemacrafter.vercel.app" target="_blank" rel="noopener noreferrer" className="text-cyan-600 hover:underline">
+  Try SchemaCrafter Live Demo
+</a>
+```
 
-## Deploy on Vercel
+Replace the URL above with your actual deployment URL.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech Stack
+
+- Next.js (React + TypeScript)  
+- Tailwind CSS for styling  
+- Faker.js for realistic mock data  
+- React JSON View for schema editing  
+
+---
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+---
+
+## License
+
+MIT License © [Your Name]
+
+---
+
+## Demo
+
+Check out the live demo here: [https://schemacrafter.vercel.app](https://schemacrafter.vercel.app)
+
+---
+
+## Contact
+
+Built with ❤️ by [Your Name]  
+[Your Website or Twitter]

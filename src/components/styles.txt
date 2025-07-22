@@ -1,0 +1,26 @@
+| Name                 | Variable Name                  | OKLCH Value              | Use Case                        |
+| -------------------- | ------------------------------ | ------------------------ | ------------------------------- |
+| **Light Mode**       |                                |                          |                                 |
+| Background           | `--color-bg-light`             | `oklch(0.975 0.01 260)`  | App background                  |
+| Surface              | `--color-surface-light`        | `oklch(1 0 0)`           | Panels, cards, inputs           |
+| Border               | `--color-border-light`         | `oklch(0.867 0.015 257)` | Dividers, outlines              |
+| Primary (Blue)       | `--color-primary-light`        | `oklch(0.627 0.2 254)`   | Buttons, highlights             |
+| Accent (Turquoise)   | `--color-accent-light`         | `oklch(0.78 0.21 190)`   | Links, call-to-action, glow UI  |
+| Muted Text           | `--color-muted-light`          | `oklch(0.58 0.005 270)`  | Subtle text, placeholders       |
+| **Text - Secondary** | `--color-dimmed-light`         | `oklch(0.38 0.01 270); `   | Less prominent text, UI labels  |
+| Code Background      | `--color-code-light`           | `oklch(0.42 0.03 257)`   | Code blocks, monospace elements |
+| **Default Text**     | `--color-text-light`           | `oklch(0.15 0.01 257)`   | Body text, titles, main content |
+
+
+
+| **Dark Mode**        |                               |                         |                                  |
+| -------------------- | ----------------------------- | ----------------------- | -------------------------------- |
+| Background           | `--color-bg-dark`             | `oklch(0.18 0.01 260)`  | App background                   |
+| Surface              | `--color-surface-dark`        | `oklch(0.22 0.01 257)`  | Panels, cards, inputs            |
+| Border               | `--color-border-dark`         | `oklch(0.35 0.015 257)` | Dividers, outlines               |
+| Primary (Blue)       | `--color-primary-dark`        | `oklch(0.7 0.18 254)`   | Buttons, highlights              |
+| Accent (Neon Mint)   | `--color-accent-dark`         | `oklch(0.93 0.25 182)`  | Glowy accents, links, CTA        |
+| Muted Text           | `--color-muted-dark`          | `oklch(0.48 0.005 270)`  | Subtle text, secondary info      |
+| **Text - Secondary** | `--color-dimmed-dark`         | `oklch(0.62 0.008 270);`  | Less prominent text, UI labels   |
+| Code Background      | `--color-code-dark`           | `oklch(0.95 0.01 260)`  | Code blocks, contrast containers |
+| **Default Text**     | `--color-text-dark`           | `oklch(0.95 0.01 260)`  | Body text, titles, main content  |
