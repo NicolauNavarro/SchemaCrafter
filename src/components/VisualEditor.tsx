@@ -1,6 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
-import { Asterisk, Circle, CircleCheckBig } from "lucide-react";
+import {
+  Asterisk,
+  Circle,
+  CircleCheckBig,
+  CirclePlay,
+  CirclePlus,
+  Plus,
+  Trash,
+} from "lucide-react";
 import EditorActions from "./EditorActions";
 import { useState } from "react";
 
@@ -46,7 +54,49 @@ export default function VisualEditor({
               <p className="text-dimmed-light dark:text-dimmed-dark">
                 {dbName}
               </p>
-              <div className="w-64 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col">
+              <div className="w-64 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col group/db relative">
+                <motion.div className="flex items-center gap-2 absolute -top-8 translate-y-2 group-hover/db:translate-y-0 right-0 transition-all opacity-0 group-hover/db:opacity-100 z-10 select-none h-8 pl-8 pr-4 pb-1">
+                  <div
+                    onClick={() =>
+                      addProperty({
+                        db: dbName,
+                        schemas,
+                        setSchemas,
+                      })
+                    }
+                    className="p-1 rounded-md hover:bg-border-light dark:hover:bg-border-dark hover:text-text-light dark:hover:text-text-dark text-dimmed-light dark:text-dimmed-dark transition-all cursor-pointer relative flex items-center justify-center group/tag opacity-40 hover:opacity-80"
+                  >
+                    <div className="absolute right-8 opacity-0 group-hover/tag:opacity-100 pointer-events-none">
+                      <div className="px-2 rounded-sm bg-border-light/40 dark:bg-border-dark/40 group-hover/tag:opacity-100 transition-all opacity-0 delay-500">
+                        <small className="text-xs leading-none text-dimmed-light dark:text-dimmed-dark text-nowrap">
+                          Add Property
+                        </small>
+                      </div>
+                    </div>
+                    <CirclePlus size={16} />
+                  </div>
+
+                  <div
+                    onClick={() =>
+                      deleteDatabase({
+                        db: dbName,
+                        schemas,
+                        setSchemas,
+                      })
+                    }
+                    className="p-1 rounded-md hover:bg-border-light dark:hover:bg-border-dark hover:text-text-light dark:hover:text-text-dark text-dimmed-light dark:text-dimmed-dark transition-all cursor-pointer relative flex items-center justify-center group/tag opacity-40 hover:opacity-80"
+                  >
+                    <div className="absolute left-8 opacity-0 group-hover/tag:opacity-100 pointer-events-none">
+                      <div className="px-2 rounded-sm bg-border-light/40 dark:bg-border-dark/40 group-hover/tag:opacity-100 transition-all opacity-0 delay-500">
+                        <small className="text-xs leading-none text-dimmed-light dark:text-dimmed-dark text-nowrap">
+                          Delete DB
+                        </small>
+                      </div>
+                    </div>
+                    <Trash size={16} />
+                  </div>
+                </motion.div>
+
                 {objectSchema?.properties ? (
                   Object.entries(objectSchema.properties).map(
                     ([propName, propSchema]) => (
@@ -125,7 +175,7 @@ const PropertyModule = ({
     <div className="absolute z-10 w-full h-full rounded-lg group/property">
       <motion.div
         layout
-        className={`absolute delay-300 group-hover/property:z-20 left-60 -translate-x-12 group-hover/property:translate-x-0 pl-12 group-hover/property:opacity-100 opacity-0 transition-all pointer-events-none group-hover/property:pointer-events-auto ${
+        className={`absolute delay-300 group-hover/property:z-20 left-60 -translate-x-12 group-hover/property:translate-x-0 pl-12 group-hover/property:opacity-100 opacity-0 transition-all pointer-events-none group-hover/property:pointer-events-auto group/propconifg ${
           propName === Object.entries(objectSchema.properties ?? {})[0]?.[0]
             ? "-top-4"
             : "-translate-y-4 "
@@ -203,6 +253,29 @@ const PropertyModule = ({
               />
             </div>
           )}
+
+          <motion.div className="flex items-center gap-2 absolute -top-8 translate-y-2 group-hover/propconifg:translate-y-0 right-0 transition-all opacity-0 group-hover/propconifg:opacity-100 z-10 select-none h-8 pl-12 pr-4 pb-1">
+            <div
+              onClick={() =>
+                deleteProperty({
+                  db: dbName,
+                  name: propName,
+                  schemas,
+                  setSchemas,
+                })
+              }
+              className="p-1 rounded-md hover:bg-border-light dark:hover:bg-border-dark hover:text-text-light dark:hover:text-text-dark text-dimmed-light dark:text-dimmed-dark transition-all cursor-pointer relative flex items-center justify-center group/tag opacity-40 hover:opacity-80"
+            >
+              <div className="absolute right-8 opacity-0 group-hover/tag:opacity-100 pointer-events-none">
+                <div className="px-2 rounded-sm bg-border-light/40 dark:bg-border-dark/40 group-hover/tag:opacity-100 transition-all opacity-0 delay-500">
+                  <small className="text-xs leading-none text-dimmed-light dark:text-dimmed-dark text-nowrap">
+                    Delete Property
+                  </small>
+                </div>
+              </div>
+              <Trash size={16} />
+            </div>
+          </motion.div>
         </div>
       </motion.div>
     </div>
@@ -430,7 +503,7 @@ const PropertiesModule = ({
       >
         <div className="w-64 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col relative">
           <p className="absolute -top-8 text-dimmed-light dark:text-dimmed-dark text-base">
-            {dbName} - {propName} - properties
+            {propName} - properties
           </p>
           {childSchema?.properties &&
           Object.keys(childSchema.properties).length > 0 ? (
@@ -444,6 +517,15 @@ const PropertiesModule = ({
                   <p className="text-muted-light dark:text-muted-dark">
                     {childPropSchema.type}
                   </p>
+                  <ChildPropertyModule
+                    propName={childPropName}
+                    propSchema={childPropSchema}
+                    parent={propName}
+                    dbName={dbName}
+                    schemas={schemas}
+                    setSchemas={setSchemas}
+                    objectSchema={childSchema}
+                  />
                 </div>
               )
             )
@@ -710,3 +792,255 @@ function renameProperty({
 
   setSchemas(updatedSchema);
 }
+
+type DeleteDatabaseProps = {
+  db: string;
+  schemas: Record<string, JsonSchema>;
+  setSchemas: (schemas: Record<string, JsonSchema>) => void;
+};
+
+function deleteDatabase({ db, schemas, setSchemas }: DeleteDatabaseProps) {
+  const { [db]: _, ...remainingSchemas } = schemas;
+  setSchemas(remainingSchemas);
+}
+
+type AddPropertyProps = {
+  db: string;
+  schemas: Record<string, JsonSchema>;
+  setSchemas: (schemas: Record<string, JsonSchema>) => void;
+};
+
+function addProperty({ db, schemas, setSchemas }: AddPropertyProps) {
+  const schema = schemas[db];
+  if (!schema) return;
+
+  const baseName = "new_property";
+
+  // Function to find a unique property name like new_property, new_property_1, new_property_2, ...
+  function getUniquePropertyName(
+    existingProps: Record<string, JsonSchema>,
+    base: string
+  ): string {
+    if (!existingProps[base]) return base;
+
+    let counter = 1;
+    let name = `${base}_${counter}`;
+    while (existingProps[name]) {
+      counter++;
+      name = `${base}_${counter}`;
+    }
+    return name;
+  }
+
+  const newProp = { type: "string" };
+
+  let updatedSchema = { ...schema };
+
+  // Case 1: Schema is an object
+  if (schema.type === "object" && schema.properties) {
+    const uniqueName = getUniquePropertyName(schema.properties, baseName);
+
+    updatedSchema = {
+      ...schema,
+      properties: {
+        ...schema.properties,
+        [uniqueName]: newProp,
+      },
+      required: [...(schema.required || []), uniqueName],
+    };
+  }
+
+  // Case 2: Schema is an array of objects
+  else if (schema.type === "array" && schema.items?.type === "object") {
+    const existingProps = schema.items.properties || {};
+    const uniqueName = getUniquePropertyName(existingProps, baseName);
+
+    updatedSchema = {
+      ...schema,
+      items: {
+        ...schema.items,
+        properties: {
+          ...existingProps,
+          [uniqueName]: newProp,
+        },
+        required: [...(schema.items.required || []), uniqueName],
+      },
+    };
+  }
+
+  // Update schemas
+  setSchemas({
+    ...schemas,
+    [db]: updatedSchema,
+  });
+}
+
+type DeletePropertyProps = {
+  db: string;
+  name: string;
+  schemas: Record<string, JsonSchema>;
+  setSchemas: (schemas: Record<string, JsonSchema>) => void;
+};
+
+function deleteProperty({
+  db,
+  name,
+  schemas,
+  setSchemas,
+}: DeletePropertyProps) {
+  const schema = schemas[db];
+  if (!schema) return;
+
+  let updatedSchema = { ...schema };
+
+  // Case 1: Schema is an object
+  if (schema.type === "object" && schema.properties) {
+    const { [name]: _, ...remainingProps } = schema.properties;
+    const newRequired = (schema.required || []).filter(
+      (prop: string) => prop !== name
+    );
+
+    updatedSchema = {
+      ...schema,
+      properties: remainingProps,
+      required: newRequired,
+    };
+  }
+
+  // Case 2: Schema is an array of objects
+  else if (schema.type === "array" && schema.items?.type === "object") {
+    const { [name]: _, ...remainingProps } = schema.items.properties || {};
+    const newRequired = (schema.items.required || []).filter(
+      (prop: string) => prop !== name
+    );
+
+    updatedSchema = {
+      ...schema,
+      items: {
+        ...schema.items,
+        properties: remainingProps,
+        required: newRequired,
+      },
+    };
+  }
+
+  // Update schemas
+  setSchemas({
+    ...schemas,
+    [db]: updatedSchema,
+  });
+}
+
+type ChildPropertyModuleProps = {
+  propName: string;
+  propSchema: JsonSchema;
+  dbName: string;
+  parent: string;
+  objectSchema: JsonSchema;
+  schemas: Record<string, JsonSchema>;
+  setSchemas: (value: Record<string, JsonSchema>) => void;
+};
+
+const ChildPropertyModule = ({
+  propName,
+  propSchema,
+  dbName,
+  parent,
+  objectSchema,
+  schemas,
+  setSchemas,
+}: ChildPropertyModuleProps) => {
+  return (
+    <div className="absolute z-10 w-full h-full rounded-lg group/childproperty">
+      <motion.div
+        layout
+        className={`absolute delay-300 group-hover/childproperty:z-20 left-60 -translate-x-12 group-hover/childproperty:translate-x-0 pl-12 group-hover/childproperty:opacity-100 opacity-0 transition-all pointer-events-none group-hover/childproperty:pointer-events-auto group/propconifg ${
+          propName === Object.entries(objectSchema.properties ?? {})[0]?.[0]
+            ? "-top-4"
+            : "-translate-y-4 "
+        }`}
+      >
+        <div className="w-80 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col relative">
+          <p className="absolute -top-8 text-dimmed-light dark:text-dimmed-dark text-base">
+            {dbName} - {propName}
+          </p>
+          <div className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative">
+            <p className="opacity-90">Type</p>
+            <p className="text-muted-light dark:text-muted-dark">
+              {propSchema.$comment
+                ? `id · ${propSchema.type.substring(0, 3)}`
+                : propSchema.type}
+            </p>
+          </div>
+          <div className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative">
+            <p className="opacity-90">Property name</p>
+            <p className="text-muted-light dark:text-muted-dark">{propName}</p>
+          </div>
+
+          <div
+            onClick={() =>
+              toggleRequired({
+                db: dbName,
+                property: propName,
+                schemas: schemas,
+                setSchemas: setSchemas,
+              })
+            }
+            className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative"
+          >
+            <p className="opacity-90">Required</p>
+            <p className="text-muted-light dark:text-muted-dark">
+              {objectSchema.required?.find((r) => r == propName)
+                ? "true"
+                : "false"}
+            </p>
+          </div>
+
+          {(propSchema.type === "object" || propSchema.type === "array") && (
+            <div className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative">
+              <p className="opacity-90">Properties</p>
+              <p className="text-muted-light dark:text-muted-dark">
+                {propSchema.type === "object" && propSchema.properties
+                  ? Object.keys(propSchema.properties).length
+                  : propSchema.type === "array" && propSchema.items
+                  ? `${propSchema.items.type}s`
+                  : ""}
+              </p>
+              <PropertiesModule
+                propName={propName}
+                propSchema={propSchema}
+                dbName={dbName}
+                objectSchema={objectSchema}
+                schemas={schemas}
+                setSchemas={setSchemas}
+              />
+            </div>
+          )}
+
+          <motion.div className="flex items-center gap-2 absolute -top-8 translate-y-2 group-hover/propconifg:translate-y-0 right-0 transition-all opacity-0 group-hover/propconifg:opacity-100 z-10 select-none h-8 pl-12 pr-4 pb-1">
+            <div
+              onClick={() =>
+                deleteProperty({
+                  db: dbName,
+                  name: propName,
+                  schemas,
+                  setSchemas,
+                })
+              }
+              className="p-1 rounded-md hover:bg-border-light dark:hover:bg-border-dark hover:text-text-light dark:hover:text-text-dark text-dimmed-light dark:text-dimmed-dark transition-all cursor-pointer relative flex items-center justify-center group/tag opacity-40 hover:opacity-80"
+            >
+              <div className="absolute right-8 opacity-0 group-hover/tag:opacity-100 pointer-events-none">
+                <div className="px-2 rounded-sm bg-border-light/40 dark:bg-border-dark/40 group-hover/tag:opacity-100 transition-all opacity-0 delay-500">
+                  <small className="text-xs leading-none text-dimmed-light dark:text-dimmed-dark text-nowrap">
+                    Delete Property
+                  </small>
+                </div>
+              </div>
+              <Trash size={16} />
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
