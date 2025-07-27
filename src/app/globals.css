@@ -60,3 +60,17 @@
 .hide-scrollbar {
   scrollbar-width: none;
 }
+
+.property-parent:hover > .property-child:first-of-type {
+  z-index: 20;
+  --tw-translate-x: calc(var(--spacing) * 0) /* 0rem = 0px */;
+  translate: var(--tw-translate-x) var(--tw-translate-y);
+  opacity: 100%;
+  pointer-events: auto;
+}
+
+.actions-parent:hover > .actions-child:first-of-type {
+  --tw-translate-y: calc(var(--spacing) * 0) /* 0rem = 0px */;
+  translate: var(--tw-translate-x) var(--tw-translate-y);
+  opacity: 100%;
+}

@@ -38,6 +38,7 @@ export default function EditorActions({
   const [copied, setCopied] = useState(false);
 
   const handleExpand = () => setExpand(!expand);
+
   const handleFormatting = () => {
     if (setInputJson) {
       setInputJson(JSON.stringify(parsedJson, null, 2));
@@ -62,16 +63,13 @@ export default function EditorActions({
 
   return (
     <div className="flex items-center gap-2 absolute top-4 right-4 transition-opacity opacity-0 group-hover:opacity-100 z-10 select-none">
-      {parsedJson && setInputJson && !simple ? (
+      {parsedJson && setInputJson && !simple && (
         <Toolbtn
           icon={<Wand2 size={16} />}
           tag="Format"
           handleClick={handleFormatting}
         />
-      ) : (
-        ""
       )}
-
       <Toolbtn icon={<Info size={16} />} tag="Help" />
       {!simple && (
         <>
