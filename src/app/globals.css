@@ -74,3 +74,8 @@
   translate: var(--tw-translate-x) var(--tw-translate-y);
   opacity: 100%;
 }
+
+.parent-background:has(> .child-background:hover) {
+   @apply bg-muted-light/0 dark:bg-muted-dark/0
+}
+

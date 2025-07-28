@@ -26,6 +26,8 @@ type PropertiesProps = {
   name: string;
   schema: JsonSchema;
   path: string;
+  childIndex: number;
+  topHight: number;
 };
 
 export default function Properties({
@@ -34,34 +36,47 @@ export default function Properties({
   name,
   schema,
   path,
+  childIndex,
+  topHight,
 }: PropertiesProps) {
   const objectSchema = schema.type === "array" ? schema.items : schema;
 
+  const totalChildren = Object.keys(objectSchema?.properties || {}).length;
+
+  let newTopHight = topHight;
+  if (topHight < totalChildren) {
+    newTopHight = totalChildren;
+  }
+
   return (
     <div
-      className={`absolute z-10 w-full h-full rounded-lg property-parent left-0 pt-1`}
+      className={`absolute z-10 w-full h-full rounded-lg property-parent left-0`}
     >
       <motion.div
         layout
-        className={`property-child absolute delay-300 left-72 -translate-x-12 pl-12 opacity-0 transition-all pointer-events-none -translate-y-40 min-h-64 flex flex-col justify-end `}
+        className={`property-child absolute delay-300 left-56 -translate-x-12 pl-12 opacity-0 transition-all pointer-events-none rounded-xl `}
+        style={{
+          top: `-${(4 + childIndex * 9) / 4}rem`,
+        }}
       >
-        <div className="flex flex-col gap-2">
-          <p className="text-dimmed-light dark:text-dimmed-dark text-base pl-2">
-            {name}
-          </p>
-          <div className="w-64 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col relative actions-parent">
+        <div
+          className="min-h-full h-full bg-muted-light/30 dark:bg-muted-dark/30  rounded-xl parent-background transition-all"
+          style={{ minHeight: `${(8 + newTopHight * 9) / 4}rem` }}
+        >
+          <div className="w-64 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col relative actions-parent child-background">
             <Actions
               schemas={schemas}
               setSchemas={setSchemas}
-              name={name}
               schema={schema}
               path={path}
               add={true}
             />
-
+            <p className="absolute -top-8 text-dimmed-light dark:text-dimmed-dark text-base">
+              {name}
+            </p>
             {objectSchema?.properties ? (
               Object.entries(objectSchema.properties).map(
-                ([childName, childSchema]) => (
+                ([childName, childSchema], index) => (
                   <div
                     key={childName}
                     className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative"
@@ -80,6 +95,8 @@ export default function Properties({
                       path={buildPath(path, schema.type, childName)}
                       objectSchema={objectSchema}
                       parentName={name}
+                      childIndex={index}
+                      topHight={newTopHight}
                     />
                     {/* <div
                   className={`absolute left-64 p-2 rounded-md transition-all hover:bg-surface-dark  ${

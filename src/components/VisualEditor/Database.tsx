@@ -36,6 +36,8 @@ export default function Database({
 }: DatabaseProps) {
   const objectSchema = schema.type === "array" ? schema.items : schema;
 
+  const totalChildren = Object.keys(objectSchema?.properties || {}).length;
+
   return (
     <div className="flex flex-col gap-2">
       <p className="text-dimmed-light dark:text-dimmed-dark">{name}</p>
@@ -43,7 +45,6 @@ export default function Database({
         <Actions
           schemas={schemas}
           setSchemas={setSchemas}
-          name={name}
           schema={schema}
           path={path}
           trash={true}
@@ -52,7 +53,7 @@ export default function Database({
 
         {objectSchema?.properties ? (
           Object.entries(objectSchema.properties).map(
-            ([childName, childSchema]) => (
+            ([childName, childSchema], index) => (
               <div
                 key={childName}
                 className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative"
@@ -63,7 +64,17 @@ export default function Database({
                     ? `id · ${childSchema.type.substring(0, 3)}`
                     : childSchema.type}
                 </p>
-                <Property schemas={schemas} setSchemas={setSchemas} name={childName} schema={childSchema} path={buildPath(path, schema.type, childName)} objectSchema={objectSchema} parentName={name}  />
+                <Property
+                  schemas={schemas}
+                  setSchemas={setSchemas}
+                  name={childName}
+                  schema={childSchema}
+                  path={buildPath(path, schema.type, childName)}
+                  objectSchema={objectSchema}
+                  parentName={name}
+                  childIndex={index}
+                  topHight={totalChildren}
+                />
                 {/* <div
                   className={`absolute left-64 p-2 rounded-md transition-all hover:bg-surface-dark  ${
                     childSchema.$comment

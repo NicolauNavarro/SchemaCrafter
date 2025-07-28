@@ -22,10 +22,9 @@ interface JsonSchema {
 type TypeProps = {
   schemas: Record<string, JsonSchema>;
   setSchemas: (value: Record<string, JsonSchema>) => void;
-  name: string;
   schema: JsonSchema;
   path: string;
-  objectSchema: JsonSchema;
+  topHight: number;
 };
 
 const allTypes = ["string", "number", "integer", "boolean", "object", "array"];
@@ -33,101 +32,42 @@ const allTypes = ["string", "number", "integer", "boolean", "object", "array"];
 export default function Type({
   schemas,
   setSchemas,
-  name,
   schema,
   path,
-  objectSchema,
+  topHight,
 }: TypeProps) {
   return (
-    <div className="absolute z-10 w-full h-full rounded-lg group/type">
+    <div className="absolute z-10 w-full h-full rounded-lg group/type left-0">
       <motion.div
         layout
-        className={`absolute delay-300 group-hover/type:z-20 left-72 -translate-x-12 group-hover/type:translate-x-0 pl-8 group-hover/type:opacity-100 opacity-0 transition-all pointer-events-none group-hover/type:pointer-events-auto ${
-          name === Object.entries(objectSchema.properties ?? {})[0]?.[0]
-            ? "-top-4"
-            : "-translate-y-4 "
-        }`}
+        className={`absolute delay-300 group-hover/type:z-20 left-56 -translate-x-12 pl-12 group-hover/type:translate-x-0 group-hover/type:opacity-100 opacity-0 transition-all pointer-events-none group-hover/type:pointer-events-auto -top-4 rounded-xl`}
       >
-        <div className="w-64 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col relative">
-          <p className="absolute -top-8 text-dimmed-light dark:text-dimmed-dark text-base">
-            type
-          </p>
-          <div
-            onClick={() =>
-              markPropertyAsId({
-                schemas,
-                setSchemas,
-                schema,
-                path,
-                type: "number",
-              })
-            }
-            className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative"
-          >
-            <p className="opacity-90">
-              id{" "}
-              <span className="text-muted-light dark:text-muted-dark">
-                - number
-              </span>
+        <div
+          className="min-h-full h-full bg-muted-light/30 dark:bg-muted-dark/30 rounded-xl parent-background"
+          style={{ minHeight: `${(8 + topHight * 9) / 4}rem` }}
+        >
+          <div className="w-64 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col relative child-background">
+            <p className="absolute -top-8 text-dimmed-light dark:text-dimmed-dark text-base">
+              type
             </p>
-            {schema.$comment && schema.type === "number" ? (
-              <CircleCheckBig
-                size={16}
-                className="text-primary-light dark:text-primary-dark"
-              />
-            ) : (
-              <Circle
-                size={16}
-                className="text-muted-light dark:text-muted-dark"
-              />
-            )}
-          </div>
-          <div
-            onClick={() =>
-              markPropertyAsId({
-                schemas,
-                setSchemas,
-                schema,
-                path,
-                type: "string",
-              })
-            }
-            className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative"
-          >
-            <p className="opacity-90">
-              id{" "}
-              <span className="text-muted-light dark:text-muted-dark">
-                - string
-              </span>
-            </p>
-            {schema.$comment && schema.type === "string" ? (
-              <CircleCheckBig
-                size={16}
-                className="text-primary-light dark:text-primary-dark"
-              />
-            ) : (
-              <Circle
-                size={16}
-                className="text-muted-light dark:text-muted-dark"
-              />
-            )}
-          </div>
-          {allTypes.map((typ) => (
             <div
-              key={typ}
               onClick={() =>
-                changePropertyType({
+                markPropertyAsId({
                   schemas,
                   setSchemas,
-                  schema,
                   path,
-                  newType: typ,
+                  type: "number",
                 })
               }
               className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative"
             >
-              <p className="opacity-90">{typ}</p>
-              {!schema.$comment && schema.type === typ ? (
+              <p className="opacity-90">
+                id{" "}
+                <span className="text-muted-light dark:text-muted-dark">
+                  - number
+                </span>
+              </p>
+              {schema.$comment && schema.type === "number" ? (
                 <CircleCheckBig
                   size={16}
                   className="text-primary-light dark:text-primary-dark"
@@ -139,7 +79,63 @@ export default function Type({
                 />
               )}
             </div>
-          ))}
+            <div
+              onClick={() =>
+                markPropertyAsId({
+                  schemas,
+                  setSchemas,
+                  path,
+                  type: "string",
+                })
+              }
+              className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative"
+            >
+              <p className="opacity-90">
+                id{" "}
+                <span className="text-muted-light dark:text-muted-dark">
+                  - string
+                </span>
+              </p>
+              {schema.$comment && schema.type === "string" ? (
+                <CircleCheckBig
+                  size={16}
+                  className="text-primary-light dark:text-primary-dark"
+                />
+              ) : (
+                <Circle
+                  size={16}
+                  className="text-muted-light dark:text-muted-dark"
+                />
+              )}
+            </div>
+            {allTypes.map((typ) => (
+              <div
+                key={typ}
+                onClick={() =>
+                  changePropertyType({
+                    schemas,
+                    setSchemas,
+                    path,
+                    newType: typ,
+                  })
+                }
+                className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative"
+              >
+                <p className="opacity-90">{typ}</p>
+                {!schema.$comment && schema.type === typ ? (
+                  <CircleCheckBig
+                    size={16}
+                    className="text-primary-light dark:text-primary-dark"
+                  />
+                ) : (
+                  <Circle
+                    size={16}
+                    className="text-muted-light dark:text-muted-dark"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </motion.div>
     </div>
@@ -149,8 +145,7 @@ export default function Type({
 interface ChangePropertyTypeProps {
   schemas: Record<string, JsonSchema>;
   setSchemas: (value: Record<string, JsonSchema>) => void;
-  path: string; // e.g., "products.items.colors.items.hex"
-  schema: JsonSchema;
+  path: string;
   newType: string;
 }
 
@@ -158,11 +153,10 @@ export function changePropertyType({
   schemas,
   setSchemas,
   path,
-  schema,
   newType,
 }: ChangePropertyTypeProps) {
   const keys = path.split(".");
-  const db = keys.shift(); // top-level key like "users" or "products"
+  const db = keys.shift();
 
   if (!db || !schemas[db]) return;
 
@@ -203,12 +197,10 @@ export function changePropertyType({
 
     targetProp.type = newType;
 
-    // Clean up previous structure
     delete targetProp.properties;
     delete targetProp.required;
     delete targetProp.items;
 
-    // Re-initialize structure based on new type
     if (newType === "object") {
       targetProp.properties = {};
       targetProp.required = [];
@@ -229,18 +221,15 @@ function markPropertyAsId({
   schemas,
   setSchemas,
   path,
-  schema,
   type,
 }: {
   schemas: Record<string, JsonSchema>;
   setSchemas: (value: Record<string, JsonSchema>) => void;
-  path: string; // e.g. "products.items.properties.product_name"
-  schema: JsonSchema;
+  path: string;
   type: "string" | "number";
 }) {
   const pathParts = path.split(".");
 
-  // Deep clone to avoid mutation
   const updatedSchemas: Record<string, JsonSchema> = JSON.parse(
     JSON.stringify(schemas)
   );
@@ -270,14 +259,11 @@ function markPropertyAsId({
       if (current.type === "object" && current.properties) {
         parentSchema = current;
         parentProperties = current.properties;
-        // 👇 The next key will be a property key (not 'properties' or 'items')
-        // so we don't move current yet
       } else {
         console.warn("Expected 'object' type with 'properties' at:", part);
         return;
       }
     } else {
-      // 🔍 This should be a property key in parentProperties
       if (parentProperties && part in parentProperties) {
         targetKey = part;
         current = parentProperties[part];
@@ -293,7 +279,6 @@ function markPropertyAsId({
     return;
   }
 
-  // ✅ Set the ID comment and enforce type
   const idComment =
     type === "string" ? "prisma:id uuid" : "prisma:id autoincrement";
 
@@ -303,14 +288,12 @@ function markPropertyAsId({
     $comment: idComment,
   };
 
-  // ❌ Remove ID comments from siblings
   for (const [key, prop] of Object.entries(parentProperties)) {
     if (key !== targetKey && prop.$comment?.startsWith("prisma:id")) {
       delete prop.$comment;
     }
   }
 
-  // ✅ Ensure it's required
   if (parentSchema) {
     if (!parentSchema.required) {
       parentSchema.required = [];

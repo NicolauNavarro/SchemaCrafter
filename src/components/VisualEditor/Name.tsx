@@ -23,7 +23,6 @@ type NameProps = {
   schemas: Record<string, JsonSchema>;
   setSchemas: (value: Record<string, JsonSchema>) => void;
   name: string;
-  schema: JsonSchema;
   path: string;
   objectSchema: JsonSchema;
 };
@@ -32,7 +31,6 @@ export default function Name({
   schemas,
   setSchemas,
   name,
-  schema,
   path,
   objectSchema,
 }: NameProps) {
@@ -42,7 +40,7 @@ export default function Name({
     <div className="absolute z-10 w-full h-full rounded-lg group/name">
       <motion.div
         layout
-        className={`absolute delay-300 group-hover/name:z-20 left-72 -translate-x-12 group-hover/name:translate-x-0 pl-8 group-hover/name:opacity-100 opacity-0 transition-all pointer-events-none group-hover/name:pointer-events-auto pt-12 pb-12 ${
+        className={`absolute delay-300 group-hover/name:z-20 left-56 -translate-x-12 group-hover/name:translate-x-0 pl-8 group-hover/name:opacity-100 opacity-0 transition-all pointer-events-none group-hover/name:pointer-events-auto pt-12 pb-12 ${
           name === Object.entries(objectSchema.properties ?? {})[0]?.[0]
             ? "-translate-y-12"
             : "-translate-y-12 "
@@ -66,7 +64,6 @@ export default function Name({
                   schemas,
                   setSchemas,
                   path,
-                  schema,
                   newName: newName,
                 });
                 setNewName("");
@@ -86,17 +83,17 @@ function renamePropertyInSchema({
   schemas,
   setSchemas,
   path,
-  schema,
   newName,
 }: {
   schemas: Record<string, JsonSchema>;
   setSchemas: (value: Record<string, JsonSchema>) => void;
   path: string;
-  schema: JsonSchema;
   newName: string;
 }) {
   const pathParts = path.split(".");
-  const updatedSchemas: Record<string, JsonSchema> = JSON.parse(JSON.stringify(schemas));
+  const updatedSchemas: Record<string, JsonSchema> = JSON.parse(
+    JSON.stringify(schemas)
+  );
 
   let current: JsonSchema | undefined = updatedSchemas[pathParts[0]];
   let parentSchema: JsonSchema | undefined = undefined;
@@ -138,15 +135,18 @@ function renamePropertyInSchema({
     }
   }
 
-  // ❗ Final safety check before mutating anything
-  if (!parentSchema || !parentProperties || !oldKey || !(oldKey in parentProperties)) {
+  if (
+    !parentSchema ||
+    !parentProperties ||
+    !oldKey ||
+    !(oldKey in parentProperties)
+  ) {
     console.warn("Unable to rename property — invalid state.");
     return;
   }
 
   const propSchema = parentProperties[oldKey];
 
-  // 🔄 Generate unique name if needed
   let finalNewName = newName;
   let counter = 1;
   while (finalNewName in parentProperties) {
@@ -154,7 +154,6 @@ function renamePropertyInSchema({
     counter++;
   }
 
-  // 🧩 Rebuild properties to preserve order
   const newProperties: Record<string, JsonSchema> = {};
   for (const [key, value] of Object.entries(parentProperties)) {
     if (key === oldKey) {
@@ -166,7 +165,6 @@ function renamePropertyInSchema({
 
   parentSchema.properties = newProperties;
 
-  // 🔁 Update `required` array
   if (parentSchema.required) {
     const index = parentSchema.required.indexOf(oldKey);
     if (index !== -1) {
