@@ -25,6 +25,7 @@ type EditorProps = {
   expand: boolean;
   setExpand: (value: boolean) => void;
   setSchemas: (value: Record<string, JsonSchema>) => void;
+  refreshSchemas: () => void;
 };
 
 export default function VisualEditor({
@@ -32,6 +33,7 @@ export default function VisualEditor({
   expand,
   setExpand,
   setSchemas,
+  refreshSchemas,
 }: EditorProps) {
   return (
     <motion.div
@@ -40,10 +42,14 @@ export default function VisualEditor({
         expand ? "w-full" : "w-2/3"
       }`}
     >
-       <EditorActions expand={expand} setExpand={setExpand} simple={true} />
+      <div className="h-full w-full relative group">
+      <EditorActions
+        expand={expand}
+        setExpand={setExpand}
+        simple={true}
+        refreshSchemas={refreshSchemas}
+      />
       <div className="w-full h-full overflow-scroll hide-scrollbar flex flex-col gap-8 p-4 ">
-       
-
         {Object.entries(schemas).map(([dbName, schema]) => (
           <Database
             key={dbName}
@@ -54,6 +60,7 @@ export default function VisualEditor({
             path={dbName}
           />
         ))}
+      </div>
       </div>
     </motion.div>
   );

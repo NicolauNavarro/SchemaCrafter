@@ -1,6 +1,7 @@
 "use client";
 import EditorActions from "@/components/EditorActions";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
 
@@ -25,6 +26,8 @@ interface SchemaEditorProps {
   labMode: boolean;
   setLabMode: (value: boolean) => void;
   schemas: Record<string, JsonSchema>;
+  setSchemas: (value: Record<string, JsonSchema>) => void;
+  refreshSchemas: () => void;
 }
 
 export default function SchemaEditor({
@@ -33,8 +36,46 @@ export default function SchemaEditor({
   labMode,
   setLabMode,
   schemas,
+  setSchemas,
+  refreshSchemas,
 }: SchemaEditorProps) {
+  const [rawInput, setRawInput] = useState(JSON.stringify(schemas, null, 2));
+
+  useEffect(() => {
+    // Sync raw input when schemas change externally
+    setRawInput(JSON.stringify(schemas, null, 2));
+  }, [schemas]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setRawInput(newValue);
+
+    try {
+      const parsed = JSON.parse(newValue);
+      if (!deepEqual(parsed, schemas)) {
+        setSchemas(parsed);
+      }
+    } catch {
+      // JSON invalid: do nothing
+    }
+  };
+
   const handleLabToggle = () => setLabMode(!labMode);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const textarea = e.currentTarget;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const newValue =
+        rawInput.substring(0, start) + "  " + rawInput.substring(end); // 2 spaces
+      setRawInput(newValue);
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + 2;
+      }, 0);
+    }
+  };
 
   return (
     <motion.div
@@ -53,10 +94,22 @@ export default function SchemaEditor({
             expand={expand}
             setExpand={setExpand}
             clipboard={JSON.stringify(schemas, null, 2)}
+            refreshSchemas={refreshSchemas}
           />
-          <pre className="resize-none border-none outline-none rounded-lg font-mono text-sm p-4 text-code-light dark:text-code-dark h-full overflow-scroll hide-scrollbar w-full">
-            {JSON.stringify(schemas, null, 2)}
-          </pre>
+          {labMode ? (
+            <textarea
+              value={rawInput}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              spellCheck="false"
+              placeholder="Write your JSON with multiple root keys (e.g., User, Post)..."
+              className="resize-none border-none outline-none rounded-lg bg-surface-light dark:bg-surface-dark font-mono text-sm p-4 text-code-light dark:text-code-dark h-full w-full overflow-scroll hide-scrollbar"
+            ></textarea>
+          ) : (
+            <pre className="resize-none border-none outline-none rounded-lg font-mono text-sm p-4 text-code-light dark:text-code-dark h-full overflow-scroll hide-scrollbar w-full">
+              {JSON.stringify(schemas, null, 2)}
+            </pre>
+          )}
         </div>
       ) : (
         <p className="p-4">Schema is empty or invalid</p>
@@ -74,4 +127,45 @@ export default function SchemaEditor({
       )}
     </motion.div>
   );
+}
+
+function deepEqual<T>(a: T, b: T): boolean {
+  if (a === b) return true;
+
+  if (
+    typeof a !== "object" ||
+    typeof b !== "object" ||
+    a === null ||
+    b === null
+  ) {
+    return false;
+  }
+
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!deepEqual(a[i], b[i])) return false;
+    }
+    return true;
+  }
+
+  if (
+    Array.isArray(a) !== Array.isArray(b) ||
+    Object.prototype.toString.call(a) !== Object.prototype.toString.call(b)
+  ) {
+    return false;
+  }
+
+  const keysA = Object.keys(a as object);
+  const keysB = Object.keys(b as object);
+
+  if (keysA.length !== keysB.length) return false;
+
+  for (const key of keysA) {
+    const typedKey = key as keyof T;
+    if (!(key in (b as object))) return false;
+    if (!deepEqual(a[typedKey], b[typedKey])) return false;
+  }
+
+  return true;
 }

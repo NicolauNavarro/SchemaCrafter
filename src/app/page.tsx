@@ -33,9 +33,9 @@ export default function Home() {
   const [expandInput, setExpandInput] = useState(false);
   const [expandVisual, setExpandVisual] = useState(false);
 
-  useEffect(() => {
+  function parseSchemasFromJson(json: string) {
     try {
-      const parsed = JSON.parse(inputJson);
+      const parsed = JSON.parse(json);
       setParsedJson(parsed);
       setError(null);
 
@@ -49,17 +49,21 @@ export default function Home() {
           schemaSet[key] = inferSchema(parsed[key]);
         }
         setSchemas(schemaSet);
-        console.log(schemaSet);
       } else {
         throw new Error(
           "Root JSON must be an object containing multiple schemas."
         );
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setParsedJson(null);
       setSchemas({});
       setError("Invalid JSON");
     }
+  }
+
+  useEffect(() => {
+    parseSchemasFromJson(inputJson);
   }, [inputJson]);
 
   useEffect(() => {
@@ -89,6 +93,8 @@ export default function Home() {
           labMode={labMode}
           setLabMode={setLabMode}
           schemas={schemas}
+          setSchemas={setSchemas}
+          refreshSchemas={() => parseSchemasFromJson(inputJson)}
         />
       )}
 
@@ -98,6 +104,7 @@ export default function Home() {
           setExpand={setExpandVisual}
           schemas={schemas}
           setSchemas={setSchemas}
+          refreshSchemas={() => parseSchemasFromJson(inputJson)}
         />
       )}
     </motion.div>

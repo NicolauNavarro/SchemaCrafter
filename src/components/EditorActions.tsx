@@ -6,6 +6,7 @@ import {
   Info,
   Maximize2,
   Minimize2,
+  RotateCcw,
   Wand2,
 } from "lucide-react";
 import { useState } from "react";
@@ -25,6 +26,7 @@ interface ActionsProps {
   setInputJson?: (value: string) => void;
   clipboard?: string;
   simple?: boolean;
+  refreshSchemas?: () => void;
 }
 
 export default function EditorActions({
@@ -34,6 +36,7 @@ export default function EditorActions({
   setInputJson,
   clipboard,
   simple,
+  refreshSchemas,
 }: ActionsProps) {
   const [copied, setCopied] = useState(false);
 
@@ -42,6 +45,12 @@ export default function EditorActions({
   const handleFormatting = () => {
     if (setInputJson) {
       setInputJson(JSON.stringify(parsedJson, null, 2));
+    }
+  };
+
+  const handleReset = () => {
+    if (refreshSchemas) {
+      refreshSchemas();
     }
   };
 
@@ -68,6 +77,13 @@ export default function EditorActions({
           icon={<Wand2 size={16} />}
           tag="Format"
           handleClick={handleFormatting}
+        />
+      )}
+      {refreshSchemas && (
+        <Toolbtn
+          icon={<RotateCcw size={16} />}
+          tag="Reset"
+          handleClick={handleReset}
         />
       )}
       <Toolbtn icon={<Info size={16} />} tag="Help" />
