@@ -23,8 +23,32 @@ interface JsonSchema {
   $comment?: string;
 }
 
+const defaultInput = `{
+  "users": [
+    {
+      "name": "alex",
+      "age": 25,
+      "premium": false
+    }
+  ],
+  "products": [
+    {
+      "product_name": "Laptop Pro",
+      "avalibale": true,
+      "price": 999,
+      "colors": [
+        {
+          "name": "Space Gray",
+          "hex": "#888888",
+          "stock": true
+        }
+      ]
+    }
+  ]
+}`;
+
 export default function Home() {
-  const [inputJson, setInputJson] = useState<string>("");
+  const [inputJson, setInputJson] = useState<string>(defaultInput);
   const [parsedJson, setParsedJson] = useState<JsonObject | null>(null);
   const [schemas, setSchemas] = useState<Record<string, JsonSchema>>({});
   const [error, setError] = useState<string | null>(null);

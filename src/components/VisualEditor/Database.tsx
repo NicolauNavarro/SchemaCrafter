@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import Actions from "./Actions";
 import Property from "./Property";
 
@@ -34,13 +35,42 @@ export default function Database({
   schema,
   path,
 }: DatabaseProps) {
+  const [dbName, setDbName] = useState(name);
+
+  useEffect(() => {
+    setDbName(name);
+  }, [name]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDbName(e.target.value);
+  };
+
+  const handleBlur = () => {
+    const newName = dbName.trim();
+    if (newName !== name && newName !== "" && !schemas[newName]) {
+      renameDatabase({ schemas, setSchemas, oldName: name, newName });
+    } else {
+      setDbName(name);
+    }
+  };
+
   const objectSchema = schema.type === "array" ? schema.items : schema;
 
   const totalChildren = Object.keys(objectSchema?.properties || {}).length;
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-dimmed-light dark:text-dimmed-dark">{name}</p>
+      <input
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
+        autoCapitalize="off"
+        className="bg-transparent text-dimmed-light dark:text-dimmed-dark font-medium focus:outline-none focus:ring-0"
+        value={dbName}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+
       <div className="w-64 p-2 py-4 rounded-xl bg-surface-light dark:bg-surface-dark text-sm flex flex-col relative actions-parent">
         <Actions
           schemas={schemas}
@@ -109,4 +139,34 @@ function buildPath(parentPath: string, type: string, key: string) {
   return `${parentPath}.${
     type === "array" ? "items.properties" : "properties"
   }.${key}`;
+}
+
+type RenameDBProps = {
+  schemas: Record<string, JsonSchema>;
+  setSchemas: (value: Record<string, JsonSchema>) => void;
+  oldName: string;
+  newName: string;
+};
+function renameDatabase({
+  schemas,
+  setSchemas,
+  oldName,
+  newName,
+}: RenameDBProps) {
+  if (!schemas.hasOwnProperty(oldName) || schemas.hasOwnProperty(newName)) {
+    console.warn("Invalid rename: name conflict or old name missing.");
+    return;
+  }
+
+  const updatedSchemas: Record<string, JsonSchema> = {};
+
+  for (const key of Object.keys(schemas)) {
+    if (key === oldName) {
+      updatedSchemas[newName] = schemas[oldName];
+    } else {
+      updatedSchemas[key] = schemas[key];
+    }
+  }
+
+  setSchemas(updatedSchemas);
 }

@@ -94,7 +94,7 @@ export default function Property({
               />
             </div>
             <div className="w-full px-4 py-2 flex items-center justify-between transition-all hover:bg-border-light/40 dark:hover:bg-border-dark/40 rounded-lg cursor-pointer relative">
-              <p className="opacity-90">Property name</p>
+              <p className="opacity-90">Name</p>
               <p className="text-muted-light dark:text-muted-dark">{name}</p>
               <Name
                 schemas={schemas}

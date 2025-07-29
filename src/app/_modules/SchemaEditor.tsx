@@ -94,7 +94,7 @@ export default function SchemaEditor({
             expand={expand}
             setExpand={setExpand}
             clipboard={JSON.stringify(schemas, null, 2)}
-            refreshSchemas={refreshSchemas}
+            {...(labMode && { refreshSchemas })}
           />
           {labMode ? (
             <textarea
